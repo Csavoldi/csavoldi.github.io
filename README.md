@@ -6,6 +6,18 @@ Static personal portfolio and blog for GitHub Pages.
 
 Run `npm install` to install the local markdown authoring dependencies.
 
+## Local Preview
+
+From the repository root, start a simple static server with:
+
+```sh
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000/` in your browser to preview the site locally.
+
+If you have changed any markdown posts, run `npm run build:posts` before refreshing so the generated blog pages stay in sync.
+
 ## Blog Authoring Workflow
 
 Write source posts in `content/posts/` using markdown with this front matter:

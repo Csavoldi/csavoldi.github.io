@@ -16,9 +16,17 @@
 - No auto-playing media
 - Avoid heavy animations
 
-## Review guidelines
+## Definition of done
+- Summarize commands run and there outputs in the final handoff.
+- No unrelated refactors in the same change.
+- New behaviour is documented.
+-
+
+## Review expectations
 - Preserve GitHub Pages compatibility
 - Do not break the custom domain setup
 - Do not rename files casually
 - Keep CSS simple and documented
 - Treat broken links, accessibility regressions, and layout breakage as high priority
+- State what changed, why it changed, and what evidence proves it.
+- Call out any skipped checks or assumptions explicitly.

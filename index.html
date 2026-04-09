@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Player One | Portfolio</title>
-  <meta name="description" content="A personal portfolio, resume snapshot, and static blog with a retro CRT-inspired aesthetic.">
+  <title>Jordan Carter | Portfolio and Notes</title>
+  <meta name="description" content="A retro-CRT inspired personal portfolio, resume snapshot, and static blog.">
   <link rel="stylesheet" href="assets/css/site.css">
   <script src="assets/js/theme.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
   <header class="site-header site-shell panel">
     <a class="brand" href="./">PLAYER ONE</a>
     <nav class="site-nav" aria-label="Primary">
@@ -23,14 +25,160 @@
     </div>
   </header>
 
-  <main class="site-shell">
-    <section class="shell-placeholder panel" aria-labelledby="shell-title">
-      <h1 id="shell-title">Initializing portfolio shell</h1>
-      <p>
-        The shared site shell, theme controls, and reusable assets are in place. The next pass fills this
-        with the full portfolio homepage and static blog.
+  <main id="main-content" class="site-shell page-stack">
+    <section id="hero" class="hero panel" aria-labelledby="hero-title">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Portfolio / Resume / Notes</p>
+          <h1 id="hero-title">Jordan Carter builds clear digital experiences and writes about the work behind them.</h1>
+          <p class="lead">
+            This is a placeholder portfolio for a product-minded builder who likes structure, readable systems,
+            and sharing what they learn in public.
+          </p>
+          <div class="cta-row">
+            <a class="button-link primary" href="blog/">Read the Blog</a>
+            <a class="button-link secondary" href="#contact">Get in Touch</a>
+          </div>
+        </div>
+        <aside class="signal-board panel" aria-label="Quick facts">
+          <div class="stat-chip">
+            <span class="meta-label">Status</span>
+            <strong>Open to thoughtful product and design work</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="meta-label">Focus</span>
+            <strong>Interfaces, systems, and technical writing</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="meta-label">Mode</span>
+            <strong>Independent builder with a bias for calm clarity</strong>
+          </div>
+          <div class="stat-chip">
+            <span class="meta-label">Log</span>
+            <strong>Publishing notes, process writeups, and experiments</strong>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" class="section-block panel" aria-labelledby="about-title">
+      <div class="section-heading">
+        <p class="eyebrow">About</p>
+        <h2 id="about-title">A readable intro screen</h2>
+      </div>
+      <p class="section-intro">
+        Jordan is a placeholder name for a person who works across product thinking, interface design, and front-end execution.
+        They care about making digital experiences feel calm, fast, and easy to understand, then documenting the decisions so the next person can move faster.
       </p>
     </section>
+
+    <section id="resume" class="section-block panel" aria-labelledby="resume-title">
+      <div class="section-heading">
+        <p class="eyebrow">Resume Snapshot</p>
+        <h2 id="resume-title">Current loadout</h2>
+      </div>
+      <div class="resume-grid">
+        <article class="resume-card">
+          <h3>Experience</h3>
+          <p>Placeholder roles focused on shipping clear interfaces and cross-functional product work.</p>
+          <ul class="detail-list">
+            <li>Led small web launches from concept to release</li>
+            <li>Translated vague product ideas into maintainable front-end systems</li>
+            <li>Wrote documentation that helped teams reuse patterns</li>
+          </ul>
+        </article>
+        <article class="resume-card">
+          <h3>Skills</h3>
+          <p>Enough range to move from planning to polish without overcomplicating the stack.</p>
+          <ul class="detail-list">
+            <li>HTML, CSS, and JavaScript for fast static experiences</li>
+            <li>Information architecture, content structure, and interaction design</li>
+            <li>Design systems thinking, accessibility, and editorial writing</li>
+          </ul>
+        </article>
+        <article class="resume-card">
+          <h3>Education</h3>
+          <p>Placeholder background shaped by self-directed learning and hands-on projects.</p>
+          <ul class="detail-list">
+            <li>Independent study in product strategy and UI craft</li>
+            <li>Ongoing practice with writing, publishing, and web standards</li>
+            <li>Project-based learning through personal experiments and client work</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="links" class="section-block panel" aria-labelledby="links-title">
+      <div class="section-heading">
+        <p class="eyebrow">Links</p>
+        <h2 id="links-title">Places to explore</h2>
+      </div>
+      <div class="link-grid">
+        <article class="link-card">
+          <h3><a class="card-link" href="https://github.com/username">GitHub</a></h3>
+          <p>Code experiments, shipped prototypes, and assorted build logs.</p>
+        </article>
+        <article class="link-card">
+          <h3><a class="card-link" href="https://www.linkedin.com/in/username/">LinkedIn</a></h3>
+          <p>Professional profile, experience summary, and a more traditional resume path.</p>
+        </article>
+        <article class="link-card">
+          <h3><a class="card-link" href="https://example.com/resume.pdf">Resume</a></h3>
+          <p>A placeholder document link for the concise, printable version.</p>
+        </article>
+        <article class="link-card">
+          <h3><a class="card-link" href="blog/">Blog Archive</a></h3>
+          <p>Writing about process, interface decisions, experiments, and lessons learned.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="featured-posts" class="section-block panel" aria-labelledby="posts-title">
+      <div class="section-heading">
+        <p class="eyebrow">Featured Posts</p>
+        <h2 id="posts-title">Recent notes from the log</h2>
+      </div>
+      <div class="post-grid">
+        <article class="post-card">
+          <p class="eyebrow">Featured Post</p>
+          <h3><a href="blog/posts/first-post.html">Why calm interfaces age better than loud ones</a></h3>
+          <p>A placeholder reflection on restraint, readability, and building layouts that survive real use.</p>
+        </article>
+        <article class="post-card">
+          <p class="eyebrow">Featured Post</p>
+          <h3><a href="blog/posts/second-post.html">Shipping a tiny static site with a big point of view</a></h3>
+          <p>A placeholder build log about using simple tools well instead of reaching for a heavy stack too early.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="contact" class="section-block panel" aria-labelledby="contact-title">
+      <div class="section-heading">
+        <p class="eyebrow">Contact</p>
+        <h2 id="contact-title">Open a channel</h2>
+      </div>
+      <p class="section-intro">
+        For collaboration, consulting, or a friendly note about the writing, these placeholder routes point to the kind of contact setup the final site can use.
+      </p>
+      <ul class="contact-list">
+        <li>
+          <strong>Email</strong>
+          <p class="contact-copy"><a href="mailto:hello@example.com">hello@example.com</a></p>
+        </li>
+        <li>
+          <strong>LinkedIn</strong>
+          <p class="contact-copy"><a href="https://www.linkedin.com/in/username/">Message on LinkedIn</a></p>
+        </li>
+        <li>
+          <strong>GitHub</strong>
+          <p class="contact-copy"><a href="https://github.com/username">github.com/username</a></p>
+        </li>
+      </ul>
+    </section>
   </main>
+
+  <footer class="site-footer site-shell">
+    <p>Placeholder portfolio running on a lightweight static stack.</p>
+  </footer>
 </body>
 </html>

@@ -37,7 +37,15 @@ Create a new draft with:
 npm run post:new -- "My New Post"
 ```
 
-Rebuild the generated blog pages with:
+Delete a post by slug with:
+
+```sh
+npm run post:delete -- my-post-slug
+```
+
+This removes the source markdown file, rebuilds `blog/index.html`, and removes the generated post page automatically.
+
+Rebuild the generated blog pages manually with:
 
 ```sh
 npm run build:posts
@@ -57,7 +65,7 @@ Generated output lives in:
 - `blog/index.html`
 - `blog/posts/*.html`
 
-Commit both the markdown source files and the generated HTML after rebuilding.
+Commit both the markdown source files and the generated HTML after creating, deleting, or editing posts.
 
 ## Notes
 

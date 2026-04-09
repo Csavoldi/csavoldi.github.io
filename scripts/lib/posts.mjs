@@ -115,3 +115,24 @@ export function createPostDraft({ title, date, contentDir = 'content/posts' }) {
 
   return { filePath, slug };
 }
+
+export function deletePostBySlug({ slug, contentDir = 'content/posts' }) {
+  const normalizedSlug = String(slug ?? '').trim();
+
+  if (!normalizedSlug) {
+    throw new Error('A post slug is required.');
+  }
+
+  const matches = loadAllPosts(contentDir).filter((post) => post.slug === normalizedSlug);
+
+  if (matches.length === 0) {
+    throw new Error(`No post found for slug '${normalizedSlug}'.`);
+  }
+
+  if (matches.length > 1) {
+    throw new Error(`Multiple posts found for slug '${normalizedSlug}'.`);
+  }
+
+  fs.rmSync(matches[0].sourcePath);
+  return { filePath: matches[0].sourcePath, slug: normalizedSlug };
+}

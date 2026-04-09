@@ -15,6 +15,8 @@ import {
 } from '../scripts/lib/posts.mjs';
 import { renderArchivePage, renderPostPage } from '../scripts/lib/templates.mjs';
 
+const siteCssPath = path.resolve(process.cwd(), 'assets/css/site.css');
+
 function writePostSource(contentDir, {
   title = 'Sample Post',
   date = '2026-04-09',
@@ -93,6 +95,15 @@ test('renderPostPage includes the shared shell and theme controls', () => {
   assert.match(html, /Back to blog/);
   assert.match(html, /\.\.\/\.\.\/assets\/css\/site\.css/);
   assert.match(html, /<h1 id="post-title">Sample<\/h1>/);
+});
+
+test('site header CSS allows the top-right theme switcher to stay on screen', () => {
+  const css = fs.readFileSync(siteCssPath, 'utf8');
+  const siteHeaderRule = css.match(/\.site-header\s*\{[\s\S]*?\}/)?.[0] ?? '';
+  const themeSwitcherRule = css.match(/\.theme-switcher\s*\{[\s\S]*?\}/)?.[0] ?? '';
+
+  assert.match(siteHeaderRule, /flex-wrap:\s*wrap;/);
+  assert.match(themeSwitcherRule, /max-width:\s*100%;/);
 });
 
 test('renderArchivePage includes post cards that link to slug-based pages', () => {

@@ -3,20 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My Site</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 60px auto;
-      padding: 0 20px;
-      line-height: 1.6;
-    }
-    h1 { margin-bottom: 0.25em; }
-  </style>
+  <title>Player One | Portfolio</title>
+  <meta name="description" content="A personal portfolio, resume snapshot, and static blog with a retro CRT-inspired aesthetic.">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/theme.js" defer></script>
 </head>
 <body>
-  <h1>Hello, internet.</h1>
-  <p>This site is hosted on GitHub Pages.</p>
+  <header class="site-header site-shell panel">
+    <a class="brand" href="./">PLAYER ONE</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="#about">About</a>
+      <a href="#links">Links</a>
+      <a href="blog/">Blog</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="theme-switcher" role="group" aria-label="Theme">
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+
+  <main class="site-shell">
+    <section class="shell-placeholder panel" aria-labelledby="shell-title">
+      <h1 id="shell-title">Initializing portfolio shell</h1>
+      <p>
+        The shared site shell, theme controls, and reusable assets are in place. The next pass fills this
+        with the full portfolio homepage and static blog.
+      </p>
+    </section>
+  </main>
 </body>
 </html>

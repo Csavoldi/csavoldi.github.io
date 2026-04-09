@@ -480,3 +480,53 @@ button {
     width: 100%;
   }
 }
+
+/* Markdown content defaults for generated blog posts. */
+.post-content > * + * {
+  margin-top: 1rem;
+}
+
+.post-content ul,
+.post-content ol {
+  padding-left: 1.25rem;
+  color: var(--muted);
+}
+
+.post-content li + li {
+  margin-top: 0.35rem;
+}
+
+.post-content blockquote {
+  margin: 1.5rem 0;
+  padding: 0.9rem 1rem;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  background: color-mix(in srgb, var(--accent-soft) 40%, transparent);
+  color: var(--muted);
+}
+
+.post-content pre {
+  overflow-x: auto;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--panel-strong) 80%, transparent);
+}
+
+.post-content code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.95em;
+}
+
+.post-content pre code {
+  display: block;
+  white-space: pre;
+}
+
+.post-content img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}

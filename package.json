@@ -1,0 +1,14 @@
+{
+  "name": "csavoldi.github.io",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:posts": "node scripts/build-posts.mjs",
+    "post:new": "node scripts/new-post.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "markdown-it": "^14.1.0"
+  }
+}

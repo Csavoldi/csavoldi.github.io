@@ -82,6 +82,19 @@ test('loadPostFile parses front matter and renders markdown', () => {
   assert.match(post.html, /<p>Fixture intro\.<\/p>/);
 });
 
+test('loadPostFile expands emoji shortcodes like :smile:', () => {
+  const contentDir = fs.mkdtempSync(path.join(os.tmpdir(), 'load-post-emoji-'));
+  const sourcePath = writePostSource(contentDir, {
+    title: 'Emoji Post',
+    slug: 'emoji-post',
+    body: 'Emoji support :smile:'
+  });
+
+  const post = loadPostFile(sourcePath);
+
+  assert.match(post.html, /<p>Emoji support 😄<\/p>/);
+});
+
 test('renderPostPage includes the shared shell and theme controls', () => {
   const html = renderPostPage({
     title: 'Sample',

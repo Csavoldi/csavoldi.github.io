@@ -3,12 +3,13 @@ import path from 'node:path';
 
 import matter from 'gray-matter';
 import MarkdownIt from 'markdown-it';
+import { full as emoji } from 'markdown-it-emoji';
 
 const markdown = new MarkdownIt({
   html: false,
   linkify: true,
   typographer: true
-});
+}).use(emoji);
 
 function normalizeDateValue(value) {
   if (value instanceof Date && !Number.isNaN(value.getTime())) {

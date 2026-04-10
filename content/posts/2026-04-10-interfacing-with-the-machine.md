@@ -13,7 +13,7 @@ What, are you expecting me to **wax** poetically about an SSH session? Anyway...
 Default port is 22, but its best to change this if internet facing, you can pick an arbitrary number in the upper range just make sure it doesnt conflict with any exposed ports.
  
 
-This will allow you to acces a remote machine as if you are sitting in front of it, if you are logging into a machine at work you will be assigned a username and password and 
+This will allow you to access a remote machine as if you are sitting in front of it, if you are logging into a machine at work you will be assigned a username and password and 
 you will probably need to setup an SSH key certificate as well. The SSH key will be registered on the work machine so that it knows you are a valid user and will allow you to login.
 
 ### Other Protocols

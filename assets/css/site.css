@@ -95,19 +95,22 @@ button {
 }
 
 .skip-link {
-  position: absolute;
+  position: fixed;
   left: 1rem;
-  top: -3rem;
-  z-index: 20;
+  top: 1rem;
+  z-index: 30;
   padding: 0.65rem 0.9rem;
   border-radius: 999px;
   background: var(--panel-strong);
   border: 1px solid var(--border);
   text-decoration: none;
+  transform: translateY(calc(-100% - 1rem));
+  opacity: 0;
 }
 
 .skip-link:focus-visible {
-  top: 1rem;
+  transform: translateY(0);
+  opacity: 1;
 }
 
 .site-shell {

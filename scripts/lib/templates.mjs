@@ -113,7 +113,7 @@ export function renderArchivePage(posts) {
     .join('\n');
 
   return renderDocument({
-    title: `Blog Archive | ${siteOwner}`,
+    title: `Blog`,
     description: archiveDescription,
     stylesheetHref: '../assets/css/site.css',
     scriptHref: '../assets/js/theme.js',

@@ -56,7 +56,6 @@ function renderDocument({ title, description, stylesheetHref, scriptHref, body }
   <script src="${scriptHref}" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Skip to content</a>
 ${body}
 </body>
 </html>

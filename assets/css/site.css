@@ -413,8 +413,9 @@ button {
   position: relative;
 }
 
+/* Generated posts fill the article panel instead of using a narrow text column. */
 .post-content {
-  max-width: 44rem;
+  width: 100%;
 }
 
 .post-content h2 {

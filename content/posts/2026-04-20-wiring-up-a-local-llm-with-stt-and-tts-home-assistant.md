@@ -16,7 +16,7 @@ I do not have a powerful enough card installed in my HomeLab (yet...Currently a 
  should be able to get some solid tokens-per-second and a model that supports tool calling.
 
 ### Model Choice
-I chose the new Gemma4 model (gemma-4-E4B-it-UD-Q4_K_XL.gguf) which is about 4.5 gigs in size, when loaded on the card it uses 5 gigs of VRAM; most modern games (that **I** play are using 10 gigs or less depending on your graphics settings) will play, I should not see a major issues 
+I chose the new Gemma4 model [gemma-4-E4B-it-UD-Q4_K_XL.gguf](https://huggingface.co/unsloth/gemma-4-E4B-it-GGUF) which is about 4.5 gigs in size, when loaded on the card it uses 5 gigs of VRAM; most modern games (that **I** play are using 10 gigs or less depending on your graphics settings) will play, I should not see a major issues 
 with this running 24-7. Is the model really smart? Well not really but I am getting 98 tokens-per-second with reasoning turned off, and thats what I need for tool calling to operate my lights and other smart home equipment. Best part about this is that everything is private I 
 only have to worry about the software that the smartlights use for setup are snooping, so I put my IOT devices on a separate subnet and VLAN than the majority of my network. 
 

@@ -319,9 +319,13 @@ button {
 
 .resume-grid,
 .link-grid,
-.post-grid,
-.archive-list {
+.post-grid {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.archive-list {
+  /* Blog archive panes stay full width so long post titles wrap naturally. */
+  grid-template-columns: 1fr;
 }
 
 .resume-card,

@@ -1,7 +1,7 @@
 ---
 title: Interfacing with the machine
 date: 2026-04-10
-summary: Waxing and waning about protocols.
+summary: Discussing protocols.
 slug: interfacing-with-the-machine
 ---
 
@@ -15,6 +15,8 @@ Default port is 22, but its best to change this if internet facing, you can pick
 
 This will allow you to access a remote machine as if you are sitting in front of it, if you are logging into a machine at work you will be assigned a username and password and 
 you will probably need to setup an SSH key certificate as well. The SSH key will be registered on the work machine so that it knows you are a valid user and will allow you to login.
+
+## I have included some refference protocols below-
 
 ### Other Protocols
 * Domain Name System	DNS	53	It is a protocol to resolve domain names to IP addresses.

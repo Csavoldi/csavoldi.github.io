@@ -1,44 +1,51 @@
 ---
 title: Interfacing with the machine
 date: 2026-04-10
-summary: Discussing protocols.
+summary: SSH basics, plus the ports and protocols I keep running into in the homelab.
 slug: interfacing-with-the-machine
 ---
 
-What, are you expecting me to **wax** poetically about an SSH session? Anyway... One of the first things I learned when I started out was to connect to a
- remote machine using the SSH protocol. This made setting up a VM or VPS easy and I dont have to be there in person; it would be pretty lame to have to drive to Seattle or San Fran
- to setup a new server, or even to walk 5 feet across my office :tired_face: :wink:. 
- 
+What, are you expecting me to **wax** poetic about an SSH session? Anyway... One of the first things I learned when I started out was connecting to a
+remote machine using SSH. This made setting up a VM or VPS easy and I don't have to be there in person; it would be pretty lame to have to drive to Seattle or San Francisco
+to set up a new server, or even to walk 5 feet across my office :tired_face: :wink:.
 
-Default port is 22, but its best to change this if internet facing, you can pick an arbitrary number in the upper range just make sure it doesnt conflict with any exposed ports.
- 
+The default port is 22, but it's best to change this if the machine is internet facing. You can pick an arbitrary number in the upper range, just make sure it doesn't conflict with any exposed ports.
 
-This will allow you to access a remote machine as if you are sitting in front of it, if you are logging into a machine at work you will be assigned a username and password and 
-you will probably need to setup an SSH key certificate as well. The SSH key will be registered on the work machine so that it knows you are a valid user and will allow you to login.
+SSH lets you work on a remote machine as if you were sitting in front of it. If you are logging into a machine at work you will be assigned a username and password, and
+you will probably need to set up an SSH key as well. The key gets registered on the remote machine so it knows you are a valid user and lets you log in without a password.
 
-## I have included some refference protocols below-
+## Ports and protocols I keep running into
 
-### Other Protocols
-* Domain Name System	DNS	53	It is a protocol to resolve domain names to IP addresses.
-* Trivial File Transfer Protocol	TFTP	69	It is used to transfer files between systems.
-* Network Time Protocol	NTP	123	It synchronizes computer clocks in a network.
-* Simple Network Management Protocol	SNMP	161	It monitors and manages network devices remotely.
-* Routing Information Protocol	RIP	520	It is used to exchange routing information between routers.
-* Internet Key Exchange	IKE	500	Internet Key Exchange
-* Bootstrap Protocol	BOOTP	68	It is used to bootstrap hosts in a network.
-* Dynamic Host Configuration Protocol	DHCP	67	It is used to assign IP addresses to devices in a network dynamically.
-* Telnet	TELNET	23	It is a text-based remote access communication protocol.
-* MySQL	MySQL	3306	It is an open-source database management system.
-* Terminal Server	TS	3389	It is a remote access protocol used for Microsoft Windows * Terminal Services by default.
-* NetBIOS Name	netbios-ns	137	It is used in Windows operating systems to resolve NetBIOS names to IP addresses on a LAN.
-* Microsoft SQL Server	ms-sql-m	1434	Used for the Microsoft SQL Server Browser service.
-* Universal Plug and Play	UPnP	1900	It is a protocol for devices to discover each other on the network and communicate.
-* PostgreSQL	PGSQL	5432	It is an object-relational database management system.
-* Virtual Network Computing	VNC	5900	It is a graphical desktop sharing system.
-* X Window System	X11	6000-6063	It is a computer software system and network protocol that provides GUI on Unix-like systems.
-* Syslog	SYSLOG	514	It is a standard protocol to collect and store log messages on a computer system.
-* Internet Relay Chat	IRC	194	It is a real-time Internet text messaging (chat) or synchronous communication protocol.
-* OpenPGP	OpenPGP	11371	It is a protocol for encrypting and signing data and communications.
-* Internet Protocol Security	IPsec	500	IPsec is also a protocol that provides secure, encrypted communication. It is commonly used in VPNs to create a secure tunnel between two devices.
-* Internet Key Exchange	IKE	11371	It is a protocol for encrypting and signing data and communications.
-* X Display Manager Control Protocol	XDMCP	177	XDMCP is a network protocol that allows a user to remotely log in to a computer running the X11.
+I keep a cheat sheet of the protocols that show up over and over in the homelab and at work. Yours will look different, but this covers most of what I touch week to week:
+
+| Protocol | Acronym | Port | What it does |
+| --- | --- | --- | --- |
+| Secure Shell | SSH | 22 | Encrypted remote terminal access |
+| Telnet | TELNET | 23 | Unencrypted remote access, what SSH replaced |
+| Hypertext Transfer Protocol | HTTP | 80 | Unencrypted web traffic |
+| HTTP Secure | HTTPS | 443 | Encrypted web traffic |
+| Domain Name System | DNS | 53 | Resolves domain names to IP addresses |
+| Bootstrap Protocol | BOOTP | 68 | Bootstraps hosts on a network, DHCP's ancestor |
+| Trivial File Transfer Protocol | TFTP | 69 | Bare-bones file transfer, common with PXE boot |
+| Dynamic Host Configuration Protocol | DHCP | 67 | Assigns IP addresses to devices dynamically |
+| Network Time Protocol | NTP | 123 | Synchronizes computer clocks on a network |
+| Simple Network Management Protocol | SNMP | 161 | Monitors and manages network devices remotely |
+| Internet Key Exchange | IKE | 500 | Negotiates the keys for IPsec tunnels |
+| Internet Protocol Security | IPsec | 50, 51, 500 | Encrypted communication, common in VPNs (ESP/AH/IKE) |
+| Syslog | SYSLOG | 514 | Collects and stores log messages |
+| Universal Plug and Play | UPnP | 1900 | Lets devices discover each other and communicate |
+| Internet Relay Chat | IRC | 194 | Real-time text messaging protocol |
+| NetBIOS Name Service | netbios-ns | 137 | Resolves NetBIOS names to IP addresses on a Windows LAN |
+| OpenPGP | OpenPGP | 11371 | Encrypts and signs data and communications |
+| X Display Manager Control Protocol | XDMCP | 177 | Remote login to a machine running X11 |
+| X Window System | X11 | 6000-6063 | Provides the GUI on Unix-like systems |
+| Remote Desktop Protocol | RDP | 3389 | Graphical remote access to Windows machines |
+| Virtual Network Computing | VNC | 5900 | Graphical desktop sharing |
+
+And a few service ports that get mistaken for protocols but are worth knowing anyway:
+
+| Service | Port | Notes |
+| --- | --- | --- |
+| MySQL | 3306 | Open-source database management system |
+| PostgreSQL | 5432 | Object-relational database management system |
+| Microsoft SQL Server Browser | 1434 | Locates SQL Server instances on the network |

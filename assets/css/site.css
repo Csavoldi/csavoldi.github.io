@@ -557,3 +557,31 @@ button {
   border: 1px solid var(--border);
   border-radius: 14px;
 }
+
+/* Tables rendered from markdown (port and protocol reference posts). */
+.post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.post-content th,
+.post-content td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.post-content th {
+  font-family: 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.78rem;
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent-soft) 35%, transparent);
+}
+
+.post-content thead + tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--accent-soft) 12%, transparent);
+}

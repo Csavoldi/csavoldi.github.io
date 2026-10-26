@@ -219,3 +219,35 @@ test('createPostDraft writes a dated markdown source file and does not overwrite
     });
   }, /already exists/);
 });
+
+test('rendered pages carry the real site branding, not template placeholders', () => {
+  const fixture = {
+    title: 'Sample',
+    date: '2026-04-09',
+    summary: 'Summary',
+    slug: 'sample',
+    html: '<p>Hello</p>'
+  };
+
+  const postPage = renderPostPage(fixture);
+  assert.doesNotMatch(postPage, /Jordan Carter|PLAYER ONE|placeholder/i);
+  assert.match(postPage, /Sample \| Csavoldi\.net<\/title>/);
+  assert.match(postPage, /class="brand"[^>]*>Csavoldi\.net</);
+
+  const archivePage = renderArchivePage([fixture]);
+  assert.doesNotMatch(archivePage, /Jordan Carter|PLAYER ONE|placeholder/i);
+  assert.match(archivePage, /class="brand"[^>]*>Csavoldi\.net</);
+});
+
+test('rendered pages link the RSS feed and favicon', () => {
+  const postPage = renderPostPage({
+    title: 'Sample',
+    date: '2026-04-09',
+    summary: 'Summary',
+    slug: 'sample',
+    html: '<p>Hello</p>'
+  });
+
+  assert.match(postPage, /rel="alternate" type="application\/rss\+xml"[^>]*href="\.\.\/\.\.\/feed\.xml"/);
+  assert.match(postPage, /rel="icon"[^>]*href="\.\.\/\.\.\/assets\/img\/favicon\.svg"/);
+});

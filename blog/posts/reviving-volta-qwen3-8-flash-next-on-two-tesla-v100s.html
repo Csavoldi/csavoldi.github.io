@@ -83,6 +83,7 @@
 <p>Everything lives in <a href="https://github.com/Csavoldi/strata-v100">strata-v100 on my GitHub</a>: the Dockerfile patch, the compose stack, full benchmarks, and the hardware breakdown.</p>
 <p>Credits where due: <a href="https://github.com/Niko1221/Strata">Strata</a> for the engine and the Volta kernels, <a href="https://huggingface.co/unsloth">Unsloth</a> for the UD-IQ4_XS quant, and Qwen for the model. Strata’s <code>docs/NVIDIA_V100.md</code> and <code>docs/OLDER_GPUS.md</code> are worth a read if you are touching anything pre-Turing.</p>
 <p>Next up is pointing more of the homelab at it and seeing what breaks. The little Gemma assistant running my lights should probably watch its back.</p>
+<p>P.S. One thing I glossed over above: cooling. Passive Tesla cards are built for server chassis airflow, so out in the open they will happily cook themselves. The fix is the <a href="https://www.thingiverse.com/thing:6897454">Dual K80/P40/V100 80mm Fan Adapter</a> by themayeah on Thingiverse. It ships with 2-slot and 3-slot variants, I printed one for each card, hung 80mm server fans on them, and the cards stay nice and cool. There is a fan curve script keeping them quiet too, more on that in a future post.</p>
 
       </div>
       <a class="back-link" href="../">Back to blog</a>

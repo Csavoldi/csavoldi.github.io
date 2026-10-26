@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://www.csavoldi.net/</loc>
+  </url>
+  <url>
+    <loc>https://www.csavoldi.net/blog/</loc>
+  </url>
+  <url>
+    <loc>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</loc>
+    <lastmod>2026-10-26</lastmod>
+  </url>
+  <url>
+    <loc>https://www.csavoldi.net/blog/posts/wiring-up-a-local-llm-with-stt-and-tts-home-assistant.html</loc>
+    <lastmod>2026-04-20</lastmod>
+  </url>
+  <url>
+    <loc>https://www.csavoldi.net/blog/posts/interfacing-with-the-machine.html</loc>
+    <lastmod>2026-04-10</lastmod>
+  </url>
+</urlset>

@@ -59,14 +59,25 @@ npm test
 
 ## Source vs Generated Files
 
-Source content lives in `content/posts/*.md`.
+Source content lives in `content/posts/*.md`. Unpublished drafts live in `content/drafts/` and are ignored by the build.
 
 Generated output lives in:
 - `blog/index.html`
 - `blog/posts/*.html`
+- `feed.xml` (RSS 2.0, site root)
+- `sitemap.xml` (site root)
+
+The site URL used by the feed and sitemap is read from the `CNAME` file (falling back to `https://csavoldi.github.io` when absent).
+
+Static site files that are not generated:
+- `404.html` (GitHub Pages custom 404; uses site-root-relative asset paths so it works at any URL depth)
+- `robots.txt` (points crawlers at `sitemap.xml`)
+- `assets/img/favicon.svg` and `assets/img/og-image.png` (referenced by page templates and social meta tags)
 
 Commit both the markdown source files and the generated HTML after creating, deleting, or editing posts.
 
 ## Notes
 
-The homepage featured posts in `index.html` stay hand-curated. The build script only owns the blog archive and the individual post pages.
+The homepage featured posts in `index.html` stay hand-curated. The build script only owns the blog archive, the individual post pages, the RSS feed, and the sitemap.
+
+Generated pages include social preview tags (Open Graph and Twitter card) and a favicon link; the shared site identity lives in `scripts/lib/site-meta.mjs`.

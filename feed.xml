@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Csavoldi.net</title>
+    <link>https://www.csavoldi.net</link>
+    <description>Homelab builds, local LLM experiments, and sysadmin lessons learned.</description>
+    <language>en-us</language>
+    <atom:link href="https://www.csavoldi.net/feed.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s</title>
+      <link>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</link>
+      <guid>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</guid>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 GMT</pubDate>
+      <description>CUDA 13 dropped Volta, so I patched my way around it. 53-58 tok/s from a 125B model on 2016-era hardware.</description>
+    </item>
+    <item>
+      <title>Wiring up a local LLM with STT and TTS + Home Assistant</title>
+      <link>https://www.csavoldi.net/blog/posts/wiring-up-a-local-llm-with-stt-and-tts-home-assistant.html</link>
+      <guid>https://www.csavoldi.net/blog/posts/wiring-up-a-local-llm-with-stt-and-tts-home-assistant.html</guid>
+      <pubDate>Mon, 20 Apr 2026 00:00:00 GMT</pubDate>
+      <description>Wrestling an LLM to turn off my lights.</description>
+    </item>
+    <item>
+      <title>Interfacing with the machine</title>
+      <link>https://www.csavoldi.net/blog/posts/interfacing-with-the-machine.html</link>
+      <guid>https://www.csavoldi.net/blog/posts/interfacing-with-the-machine.html</guid>
+      <pubDate>Fri, 10 Apr 2026 00:00:00 GMT</pubDate>
+      <description>SSH basics, plus the ports and protocols I keep running into in the homelab.</description>
+    </item>
+  </channel>
+</rss>

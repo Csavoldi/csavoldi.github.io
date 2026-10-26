@@ -3,15 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Interfacing with the machine | Jordan Carter</title>
-  <meta name="description" content="Discussing protocols.">
+  <title>Interfacing with the machine | Csavoldi.net</title>
+  <meta name="description" content="SSH basics, plus the ports and protocols I keep running into in the homelab.">
+  <link rel="icon" type="image/svg+xml" href="../../assets/img/favicon.svg">
+  
+  <link rel="alternate" type="application/rss+xml" title="Csavoldi.net RSS" href="../../feed.xml">
+  <meta property="og:title" content="Interfacing with the machine | Csavoldi.net">
+  <meta property="og:description" content="SSH basics, plus the ports and protocols I keep running into in the homelab.">
+  <meta property="og:site_name" content="Csavoldi.net">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://www.csavoldi.net/assets/img/og-image.png">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="../../assets/css/site.css">
   <script src="../../assets/js/theme.js" defer></script>
 </head>
 <body>
 
   <header class="site-header site-shell panel">
-    <a class="brand" href="../../">PLAYER ONE</a>
+    <a class="brand" href="../../">Csavoldi.net</a>
     <nav class="site-nav" aria-label="Primary">
       <a href="../../index.html#about">About</a>
       <a href="../../index.html#links">Links</a>
@@ -28,41 +37,181 @@
     <article class="post-layout panel" aria-labelledby="post-title">
       <p class="post-meta">April 10, 2026</p>
       <h1 id="post-title">Interfacing with the machine</h1>
-      <p class="post-summary">Discussing protocols.</p>
+      <p class="post-summary">SSH basics, plus the ports and protocols I keep running into in the homelab.</p>
       <div class="post-content">
-<p>What, are you expecting me to <strong>wax</strong> poetically about an SSH session? Anyway… One of the first things I learned when I started out was to connect to a
-remote machine using the SSH protocol. This made setting up a VM or VPS easy and I dont have to be there in person; it would be pretty lame to have to drive to Seattle or San Fran
-to setup a new server, or even to walk 5 feet across my office 😫 😉.</p>
-<p>Default port is 22, but its best to change this if internet facing, you can pick an arbitrary number in the upper range just make sure it doesnt conflict with any exposed ports.</p>
-<p>This will allow you to access a remote machine as if you are sitting in front of it, if you are logging into a machine at work you will be assigned a username and password and
-you will probably need to setup an SSH key certificate as well. The SSH key will be registered on the work machine so that it knows you are a valid user and will allow you to login.</p>
-<h2>I have included some refference protocols below-</h2>
-<h3>Other Protocols</h3>
-<ul>
-<li>Domain Name System	DNS	53	It is a protocol to resolve domain names to IP addresses.</li>
-<li>Trivial File Transfer Protocol	TFTP	69	It is used to transfer files between systems.</li>
-<li>Network Time Protocol	NTP	123	It synchronizes computer clocks in a network.</li>
-<li>Simple Network Management Protocol	SNMP	161	It monitors and manages network devices remotely.</li>
-<li>Routing Information Protocol	RIP	520	It is used to exchange routing information between routers.</li>
-<li>Internet Key Exchange	IKE	500	Internet Key Exchange</li>
-<li>Bootstrap Protocol	BOOTP	68	It is used to bootstrap hosts in a network.</li>
-<li>Dynamic Host Configuration Protocol	DHCP	67	It is used to assign IP addresses to devices in a network dynamically.</li>
-<li>Telnet	TELNET	23	It is a text-based remote access communication protocol.</li>
-<li>MySQL	MySQL	3306	It is an open-source database management system.</li>
-<li>Terminal Server	TS	3389	It is a remote access protocol used for Microsoft Windows * Terminal Services by default.</li>
-<li>NetBIOS Name	netbios-ns	137	It is used in Windows operating systems to resolve NetBIOS names to IP addresses on a LAN.</li>
-<li>Microsoft SQL Server	ms-sql-m	1434	Used for the Microsoft SQL Server Browser service.</li>
-<li>Universal Plug and Play	UPnP	1900	It is a protocol for devices to discover each other on the network and communicate.</li>
-<li>PostgreSQL	PGSQL	5432	It is an object-relational database management system.</li>
-<li>Virtual Network Computing	VNC	5900	It is a graphical desktop sharing system.</li>
-<li>X Window System	X11	6000-6063	It is a computer software system and network protocol that provides GUI on Unix-like systems.</li>
-<li>Syslog	SYSLOG	514	It is a standard protocol to collect and store log messages on a computer system.</li>
-<li>Internet Relay Chat	IRC	194	It is a real-time Internet text messaging (chat) or synchronous communication protocol.</li>
-<li>OpenPGP	OpenPGP	11371	It is a protocol for encrypting and signing data and communications.</li>
-<li>Internet Protocol Security	IPsec	500	IPsec is also a protocol that provides secure, encrypted communication. It is commonly used in VPNs to create a secure tunnel between two devices.</li>
-<li>Internet Key Exchange	IKE	11371	It is a protocol for encrypting and signing data and communications.</li>
-<li>X Display Manager Control Protocol	XDMCP	177	XDMCP is a network protocol that allows a user to remotely log in to a computer running the X11.</li>
-</ul>
+<p>What, are you expecting me to <strong>wax</strong> poetic about an SSH session? Anyway… One of the first things I learned when I started out was connecting to a
+remote machine using SSH. This made setting up a VM or VPS easy and I don’t have to be there in person; it would be pretty lame to have to drive to Seattle or San Francisco
+to set up a new server, or even to walk 5 feet across my office 😫 😉.</p>
+<p>The default port is 22, but it’s best to change this if the machine is internet facing. You can pick an arbitrary number in the upper range, just make sure it doesn’t conflict with any exposed ports.</p>
+<p>SSH lets you work on a remote machine as if you were sitting in front of it. If you are logging into a machine at work you will be assigned a username and password, and
+you will probably need to set up an SSH key as well. The key gets registered on the remote machine so it knows you are a valid user and lets you log in without a password.</p>
+<h2>Ports and protocols I keep running into</h2>
+<p>I keep a cheat sheet of the protocols that show up over and over in the homelab and at work. Yours will look different, but this covers most of what I touch week to week:</p>
+<table>
+<thead>
+<tr>
+<th>Protocol</th>
+<th>Acronym</th>
+<th>Port</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Secure Shell</td>
+<td>SSH</td>
+<td>22</td>
+<td>Encrypted remote terminal access</td>
+</tr>
+<tr>
+<td>Telnet</td>
+<td>TELNET</td>
+<td>23</td>
+<td>Unencrypted remote access, what SSH replaced</td>
+</tr>
+<tr>
+<td>Hypertext Transfer Protocol</td>
+<td>HTTP</td>
+<td>80</td>
+<td>Unencrypted web traffic</td>
+</tr>
+<tr>
+<td>HTTP Secure</td>
+<td>HTTPS</td>
+<td>443</td>
+<td>Encrypted web traffic</td>
+</tr>
+<tr>
+<td>Domain Name System</td>
+<td>DNS</td>
+<td>53</td>
+<td>Resolves domain names to IP addresses</td>
+</tr>
+<tr>
+<td>Bootstrap Protocol</td>
+<td>BOOTP</td>
+<td>68</td>
+<td>Bootstraps hosts on a network, DHCP’s ancestor</td>
+</tr>
+<tr>
+<td>Trivial File Transfer Protocol</td>
+<td>TFTP</td>
+<td>69</td>
+<td>Bare-bones file transfer, common with PXE boot</td>
+</tr>
+<tr>
+<td>Dynamic Host Configuration Protocol</td>
+<td>DHCP</td>
+<td>67</td>
+<td>Assigns IP addresses to devices dynamically</td>
+</tr>
+<tr>
+<td>Network Time Protocol</td>
+<td>NTP</td>
+<td>123</td>
+<td>Synchronizes computer clocks on a network</td>
+</tr>
+<tr>
+<td>Simple Network Management Protocol</td>
+<td>SNMP</td>
+<td>161</td>
+<td>Monitors and manages network devices remotely</td>
+</tr>
+<tr>
+<td>Internet Key Exchange</td>
+<td>IKE</td>
+<td>500</td>
+<td>Negotiates the keys for IPsec tunnels</td>
+</tr>
+<tr>
+<td>Internet Protocol Security</td>
+<td>IPsec</td>
+<td>50, 51, 500</td>
+<td>Encrypted communication, common in VPNs (ESP/AH/IKE)</td>
+</tr>
+<tr>
+<td>Syslog</td>
+<td>SYSLOG</td>
+<td>514</td>
+<td>Collects and stores log messages</td>
+</tr>
+<tr>
+<td>Universal Plug and Play</td>
+<td>UPnP</td>
+<td>1900</td>
+<td>Lets devices discover each other and communicate</td>
+</tr>
+<tr>
+<td>Internet Relay Chat</td>
+<td>IRC</td>
+<td>194</td>
+<td>Real-time text messaging protocol</td>
+</tr>
+<tr>
+<td>NetBIOS Name Service</td>
+<td>netbios-ns</td>
+<td>137</td>
+<td>Resolves NetBIOS names to IP addresses on a Windows LAN</td>
+</tr>
+<tr>
+<td>OpenPGP</td>
+<td>OpenPGP</td>
+<td>11371</td>
+<td>Encrypts and signs data and communications</td>
+</tr>
+<tr>
+<td>X Display Manager Control Protocol</td>
+<td>XDMCP</td>
+<td>177</td>
+<td>Remote login to a machine running X11</td>
+</tr>
+<tr>
+<td>X Window System</td>
+<td>X11</td>
+<td>6000-6063</td>
+<td>Provides the GUI on Unix-like systems</td>
+</tr>
+<tr>
+<td>Remote Desktop Protocol</td>
+<td>RDP</td>
+<td>3389</td>
+<td>Graphical remote access to Windows machines</td>
+</tr>
+<tr>
+<td>Virtual Network Computing</td>
+<td>VNC</td>
+<td>5900</td>
+<td>Graphical desktop sharing</td>
+</tr>
+</tbody>
+</table>
+<p>And a few service ports that get mistaken for protocols but are worth knowing anyway:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Port</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MySQL</td>
+<td>3306</td>
+<td>Open-source database management system</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>5432</td>
+<td>Object-relational database management system</td>
+</tr>
+<tr>
+<td>Microsoft SQL Server Browser</td>
+<td>1434</td>
+<td>Locates SQL Server instances on the network</td>
+</tr>
+</tbody>
+</table>
 
       </div>
       <a class="back-link" href="../">Back to blog</a>

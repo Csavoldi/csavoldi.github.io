@@ -3,8 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portfolio and Notes</title>
-  <meta name="description" content="A retro-CRT inspired personal portfolio, resume snapshot, and static blog.">
+  <title>Csavoldi.net | Portfolio and Notes</title>
+  <meta name="description" content="Portfolio and blog of an aspiring systems administrator: homelab builds, local LLM experiments, and lessons learned along the way.">
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Csavoldi.net RSS" href="feed.xml">
+  <meta property="og:title" content="Csavoldi.net | Portfolio and Notes">
+  <meta property="og:description" content="Portfolio and blog of an aspiring systems administrator: homelab builds, local LLM experiments, and lessons learned along the way.">
+  <meta property="og:site_name" content="Csavoldi.net">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://www.csavoldi.net/assets/img/og-image.png">
+  <meta name="twitter:card" content="summary">
   <link rel="stylesheet" href="assets/css/site.css">
   <script src="assets/js/theme.js" defer></script>
 </head>
@@ -52,7 +60,7 @@
           </div>
           <div class="stat-chip">
             <span class="meta-label">Log</span>
-            <strong>Recent activities and updates.</strong>
+            <strong>Latest entry: <a href="blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html">Reviving Volta</a> (October 26, 2026)</strong>
           </div>
         </aside>
       </div>
@@ -64,7 +72,7 @@
         <h2 id="about-title">The Intro...</h2>
       </div>
       <p class="section-intro">
-        I am an aspiring Systems Administrator with a passion for building clear and maintainable digital experiences. I have a background in Helpdesk support and designing and maintaining my home-lab and this website! I have recently been spending my time learning about and developing applications utilizing Agentic coding techniques, such as Codex and Claude this has expanded my understanding of the CI/CD pipeline and exposed me to different approaches to problem solving. I think the biggest benefit of using LLM's is the increase in velocity it provides to teams that know how to use it. I am interested in seeing how the future looks in a world where up and coming developers need to learn to code but may not need to be experts in it. I am also interested in the security implications of LLM's and how they will change the landscape of cybersecurity. I am excited to continue learning and growing in this field and sharing my journey with others.
+        I am an aspiring Systems Administrator with a passion for building clear and maintainable digital experiences. I have a background in Helpdesk support and designing and maintaining my homelab and this website! I have recently been spending my time learning about and developing applications utilizing Agentic coding techniques, such as Codex and Claude. This has expanded my understanding of the CI/CD pipeline and exposed me to different approaches to problem solving. I think the biggest benefit of using LLMs is the increase in velocity it provides to teams that know how to use them. I am interested in seeing how the future looks in a world where up and coming developers need to learn to code but may not need to be experts in it. I am also interested in the security implications of LLMs and how they will change the landscape of cybersecurity. I am excited to continue learning and growing in this field and sharing my journey with others.
       </p>
     </section>
 
@@ -77,17 +85,14 @@
         <article class="resume-card">
           <h3>Experience</h3>
           <p>Recent experience includes technical writing and documentation i.e. creating SOP's and updating KB articles. Troubleshooting connection/software issues, in a cloud environment, DNS, and Browser specific issues. </p>
-          <ul class="detail-list">
-            
-          </ul>
         </article>
         <article class="resume-card">
           <h3>Skills</h3>
           <p>Recent skills:</p>
           <ul class="detail-list">
             <li>Customer Support</li>
-            <li>Technical Writing and Documentation.</li>
-            <li>Software Troubleshooting.</li>
+            <li>Technical Writing and Documentation</li>
+            <li>Software Troubleshooting</li>
             <li>Shadowing Quality Assurance</li>
             <li>Agentic Coding Techniques</li>
             
@@ -130,14 +135,23 @@
       <div class="post-grid">
         <article class="post-card">
           <p class="eyebrow">Featured Post</p>
+          <p class="post-meta">October 26, 2026</p>
+          <h3><a href="blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html">Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s</a></h3>
+          <p>CUDA 13 dropped Volta, so I patched my way around it. 53-58 tok/s from a 125B model on 2016-era hardware.</p>
+        </article>
+
+        <article class="post-card">
+          <p class="eyebrow">Featured Post</p>
+          <p class="post-meta">April 20, 2026</p>
           <h3><a href="blog/posts/wiring-up-a-local-llm-with-stt-and-tts-home-assistant.html">Wiring up a local LLM with STT and TTS + Home Assistant</a></h3>
           <p>Wrestling an LLM to turn off my lights.</p>
         </article>
 
         <article class="post-card">
           <p class="eyebrow">Featured Post</p>
+          <p class="post-meta">April 10, 2026</p>
           <h3><a href="blog/posts/interfacing-with-the-machine.html">Interfacing with the machine</a></h3>
-          <p>Discussing protocols.</p>
+          <p>SSH basics, plus the ports and protocols I keep running into in the homelab.</p>
         </article>
         
       </div>
@@ -149,7 +163,7 @@
         <h2 id="contact-title">Open a channel</h2>
       </div>
       <p class="section-intro">
-        I am always open to a friendly hello from cyberspace please reach out below.
+        I am always open to a friendly hello from cyberspace; please reach out below.
       </p>
       <ul class="contact-list">
         <li>
@@ -166,7 +180,7 @@
   </main>
 
   <footer class="site-footer site-shell">
-    
+    <p>&copy; 2026 Csavoldi &middot; <a href="feed.xml">RSS</a></p>
   </footer>
 </body>
 </html>

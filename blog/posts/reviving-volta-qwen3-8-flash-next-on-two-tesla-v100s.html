@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s | Csavoldi.net</title>
+  <meta name="description" content="CUDA 13 dropped Volta, so I patched my way around it. 53-58 tok/s from a 125B model on 2016-era hardware.">
+  <link rel="icon" type="image/svg+xml" href="../../assets/img/favicon.svg">
+  
+  <link rel="alternate" type="application/rss+xml" title="Csavoldi.net RSS" href="../../feed.xml">
+  <meta property="og:title" content="Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s | Csavoldi.net">
+  <meta property="og:description" content="CUDA 13 dropped Volta, so I patched my way around it. 53-58 tok/s from a 125B model on 2016-era hardware.">
+  <meta property="og:site_name" content="Csavoldi.net">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://www.csavoldi.net/assets/img/og-image.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+  <script src="../../assets/js/theme.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header site-shell panel">
+    <a class="brand" href="../../">Csavoldi.net</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../../index.html#about">About</a>
+      <a href="../../index.html#links">Links</a>
+      <a href="../">Blog</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+    <div class="theme-switcher" role="group" aria-label="Theme">
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+
+  <main id="main-content" class="site-shell page-stack">
+    <article class="post-layout panel" aria-labelledby="post-title">
+      <p class="post-meta">October 26, 2026</p>
+      <h1 id="post-title">Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s</h1>
+      <p class="post-summary">CUDA 13 dropped Volta, so I patched my way around it. 53-58 tok/s from a 125B model on 2016-era hardware.</p>
+      <div class="post-content">
+<p>Remember my last post, where my homelab didn’t have a powerful enough card for anything serious, <strong>thanks</strong> current hardware market prices…? Turns out the fix was to go backwards in time. The Tesla V100 is a datacenter card from 2017, and CUDA 13 officially dropped Volta, so most new ML docker images just refuse to run on one. But each card carries 32 GB of VRAM at secondhand prices, which is a combination that basically doesn’t exist anywhere else right now. When a pair of V100-PCIE-32GB cards landed in the homelab I couldn’t say no.</p>
+<p>The goal was to run Qwen3.8-Flash-Next (125B total, 6B active, hybrid MoE) locally with Strata, in Docker, managed by Dockge like the rest of my stacks.</p>
+<h3>The Volta Problem</h3>
+<p>Strata’s stock image builds on nvidia/cuda:13.0.0, and CUDA 13 removed sm_70 support. On top of that, Strata’s CMakeLists refuses CUDA_ARCHITECTURES below 75 unless you set -DSTRATA_EXPERIMENTAL_SM60=ON, which swaps in the Volta-safe kernels: BF16 projections running on FP16 tensor cores, mma.m8n8k4 prompt attention, and dp4a expert kernels.</p>
+<p>The fix is three small changes to the Dockerfile. CUDA 12.9 base image, the experimental flag on the engine build, and the flag again on the vision encoder build. I keep the patch in the repo, or you can do the same thing with three sed one-liners if you prefer.</p>
+<p>One gotcha worth knowing: on first start Strata detects Volta and compiles its own engine inside the container (about 9 minutes on 64 cores), and that layer is ephemeral. <code>docker commit</code> the container back to the image once it is healthy, otherwise every recreate pays the 9 minutes again. After baking it in, a full <code>compose down &amp;&amp; up</code> is back to healthy in 2-3 minutes.</p>
+<h3>The Rig</h3>
+<p>Nothing exotic. A 2016-era dual socket board: 2x Xeon E5-2682 v4, 48 GB of RAM, Debian 13, NVIDIA driver 580. The whole thing runs in a QEMU VM with both V100s passed through, so no bare metal required. No NVLink either; the layer split between the cards only needs a host RAM hand-off.</p>
+<h3>The Numbers</h3>
+<p>Unsloth UD-IQ4_XS quants, int8 KV cache, MTP spec-4, 128K context:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>2x V100 (Strata)</th>
+<th>2x V100 (llama.cpp, same weights)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decode (256 tok, temp 0.7)</td>
+<td>53.1 - 57.5 tok/s</td>
+<td>37.3 tok/s</td>
+</tr>
+<tr>
+<td>Prompt processing</td>
+<td>~650 tok/s round-trip</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<p>About 45% faster than the llama.cpp baseline on the same cards, with vision working and both cards sitting near 32 GB each. A small TTS container even coexisted on GPU 1 while I ran these.</p>
+<p>The 6B-active MoE design is what makes this workable at all. With 64 GB of VRAM across the two cards, all ~59.5 GB of routed experts stay resident with no SSD spill, and Strata pins about 23 GiB of host RAM for the expert cache.</p>
+<h3>Running It Day to Day</h3>
+<p>The compose stack is in the repo. A few details that matter more than they look:</p>
+<ul>
+<li><code>KV=int8</code> with <code>GPUS=0,1</code> matches Strata’s documented V100 reference config.</li>
+<li><code>stop_grace_period: 120s</code>, because Strata releases page-locked RAM slowly.</li>
+<li><code>/models</code> mounts read-only on purpose. You get one harmless “finish mark cannot be written” log line during setup because of it.</li>
+</ul>
+<p>The API is OpenAI-compatible on <code>:8184/v1</code> (plus an Anthropic-style <code>/v1/messages</code>), tool calling works, and there is a web chat UI at <code>/</code>. Add an API key before you expose it past your LAN. Anything OpenAI-compatible can point at it; I included an example client config in the repo.</p>
+<p>Everything lives in <a href="https://github.com/Csavoldi/strata-v100">strata-v100 on my GitHub</a>: the Dockerfile patch, the compose stack, full benchmarks, and the hardware breakdown.</p>
+<p>Credits where due: <a href="https://github.com/Niko1221/Strata">Strata</a> for the engine and the Volta kernels, <a href="https://huggingface.co/unsloth">Unsloth</a> for the UD-IQ4_XS quant, and Qwen for the model. Strata’s <code>docs/NVIDIA_V100.md</code> and <code>docs/OLDER_GPUS.md</code> are worth a read if you are touching anything pre-Turing.</p>
+<p>Next up is pointing more of the homelab at it and seeing what breaks. The little Gemma assistant running my lights should probably watch its back.</p>
+
+      </div>
+      <a class="back-link" href="../">Back to blog</a>
+    </article>
+  </main>
+
+  <footer class="site-footer site-shell">
+    <p><a href="../../">Return to the homepage</a></p>
+  </footer>
+</body>
+</html>

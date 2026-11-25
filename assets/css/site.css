@@ -413,8 +413,11 @@ button {
   color: var(--muted);
 }
 
+/* The post is a grid item in .page-stack. min-width: 0 lets it shrink on phones, so a long line
+   in a code block scrolls inside the block instead of widening the whole article. */
 .post-layout {
   position: relative;
+  min-width: 0;
 }
 
 /* Generated posts fill the article panel instead of using a narrow text column. */

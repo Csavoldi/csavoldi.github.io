@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Living with Volta: settling two Tesla V100s into the homelab | Csavoldi.net</title>
+  <meta name="description" content="The follow-up I promised on the fan curve script, plus everything else it took to settle two Tesla V100s into a Proxmox homelab.">
+  <link rel="icon" type="image/svg+xml" href="../../assets/img/favicon.svg">
+  
+  <link rel="alternate" type="application/rss+xml" title="Csavoldi.net RSS" href="../../feed.xml">
+  <meta property="og:title" content="Living with Volta: settling two Tesla V100s into the homelab | Csavoldi.net">
+  <meta property="og:description" content="The follow-up I promised on the fan curve script, plus everything else it took to settle two Tesla V100s into a Proxmox homelab.">
+  <meta property="og:site_name" content="Csavoldi.net">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="https://www.csavoldi.net/assets/img/og-image.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="stylesheet" href="../../assets/css/site.css">
+  <script src="../../assets/js/theme.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header site-shell panel">
+    <a class="brand" href="../../">Csavoldi.net</a>
+    <nav class="site-nav" aria-label="Primary">
+      <a href="../../index.html#about">About</a>
+      <a href="../../index.html#links">Links</a>
+      <a href="../">Blog</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+    <div class="theme-switcher" role="group" aria-label="Theme">
+      <button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+      <button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+    </div>
+  </header>
+
+  <main id="main-content" class="site-shell page-stack">
+    <article class="post-layout panel" aria-labelledby="post-title">
+      <p class="post-meta">November 25, 2026</p>
+      <h1 id="post-title">Living with Volta: settling two Tesla V100s into the homelab</h1>
+      <p class="post-summary">The follow-up I promised on the fan curve script, plus everything else it took to settle two Tesla V100s into a Proxmox homelab.</p>
+      <div class="post-content">
+<p>At the end of <a href="reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html">my last post</a> I mentioned “a fan curve script keeping the fans quiet too, more on that in a future post”. This is that post. Getting two V100s to the point where they just run took more than the Strata patch. There was cooling, a passthrough VM, a P2P flag I would never have found on my own, and a NUMA setting that stopped the VM from booting. Then I moved the model serving from PolyStrata to a different engine, Lapilli, and measured it.</p>
+<p>The short version: Volta is old enough that most defaults are wrong now. The driver has to be the 580 branch, the toolkit has to be CUDA 12.x, and nothing gets to assume bf16. The long version is below.</p>
+<h3>The Card</h3>
+<p>The V100-PCIE-32GB is a passive card. No fans, 250 W, and a heatsink that expects a server chassis to push air through it. It takes a CPU 8-pin (EPS) power connector, not a PCIe 8-pin, which is worth checking before you close the case. It has fp16 tensor cores and nothing newer, so no bf16, no TF32, and no FP8. And it is the PCIe model, so there is no NVLink between the pair.</p>
+<h3>Cooling</h3>
+<p>I covered the shroud last time. I printed a remix of <a href="https://www.thingiverse.com/thing:6897454">themayeah’s fan adapter</a> as a <a href="https://www.thingiverse.com/thing:7423592">120 mm version</a>, so one slow fan feeds both cards. If you are sizing a fan, at 250 W the air heats by 22 °C at 20 CFM, by 14.6 °C at 30 CFM, and by 8.8 °C at 50 CFM. A shroud adds back-pressure, so check the fan’s P/Q curve and not only its free-air rating.</p>
+<p>The fan curve took longer, because of the passthrough. The host has no NVIDIA driver, so it cannot read a GPU temperature. Only the VM can. The fans are on motherboard headers, so only the host can spin them. My fix is a tiny pipeline. A script in the VM sends the hottest GPU temperature to the host every 5 s, a receiver on the host writes it to <code>/run/gpu-temp</code>, and a loop maps that file to the fan headers.</p>
+<table>
+<thead>
+<tr>
+<th>Hottest GPU</th>
+<th>Fan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>up to 35 °C</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>up to 45 °C</td>
+<td>40%</td>
+</tr>
+<tr>
+<td>up to 55 °C</td>
+<td>55%</td>
+</tr>
+<tr>
+<td>up to 65 °C</td>
+<td>70%</td>
+</tr>
+<tr>
+<td>up to 75 °C</td>
+<td>85%</td>
+</tr>
+<tr>
+<td>above 75 °C</td>
+<td>100%</td>
+</tr>
+<tr>
+<td>no reading, or older than 30 s</td>
+<td>100%</td>
+</tr>
+</tbody>
+</table>
+<p>The GPU halves its clocks at 87 °C, so full fan from 76 °C up leaves some margin. The last row matters more than the rest. If the VM is off, or the script dies, the fan goes to full speed rather than trust a stale number. I would rather have a loud server than a cooked one.</p>
+<p>The guest side is one line in a loop (trimmed):</p>
+<pre><code class="language-bash">while true; do
+  T=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits | sort -n | tail -1)
+  echo &quot;$T&quot; | timeout 5 bash -c 'cat &gt; /dev/tcp/&lt;pve-host-ip&gt;/19999'
+  sleep 5
+done
+</code></pre>
+<p>The receiver on the host listens on every interface with no authentication, so that port stays on my LAN and nowhere else. The fan loop is a lookup table and a staleness check, again trimmed:</p>
+<pre><code class="language-bash">curve() {
+  local t=$1 p
+  if   [ &quot;$t&quot; -le 35 ]; then p=64;     # ~25%
+  elif [ &quot;$t&quot; -le 45 ]; then p=102;    # ~40%
+  elif [ &quot;$t&quot; -le 55 ]; then p=140;    # ~55%
+  elif [ &quot;$t&quot; -le 65 ]; then p=178;    # ~70%
+  elif [ &quot;$t&quot; -le 75 ]; then p=216;    # ~85%
+  else                        p=255;   # 100%
+  fi
+  echo &quot;$p&quot;
+}
+
+while true; do
+  age=$(( $(date +%s) - $(stat -c %Y /run/gpu-temp 2&gt;/dev/null || echo 0) ))
+  if [ &quot;$age&quot; -le 30 ]; then P=$(curve &quot;$(cat /run/gpu-temp)&quot;); else P=255; fi
+  for n in 3 4 5; do echo &quot;$P&quot; &gt; &quot;$FAN_HWMON/pwm$n&quot;; done
+  sleep 5
+done
+</code></pre>
+<p><code>$FAN_HWMON</code> is the nct6775 hwmon directory, which the real script finds by name, and <code>pwm3</code> to <code>pwm5</code> are the system fan headers on my board. Each header has to be switched to manual control first (<code>echo 1 &gt; pwm3_enable</code>). The CPU fans stay on the board’s own control. Both scripts run as systemd services. In a 15-minute soak with six concurrent ~30k-token requests at 180 W caps, the cards sat between 54 and 59 °C.</p>
+<h3>The Passthrough VM</h3>
+<p>Both cards live in a Debian 13 VM on Proxmox. The NVIDIA driver goes in the guest and never on the host. The host only binds the cards to <code>vfio-pci</code>. That way a PVE kernel update cannot break the driver, and a failed DKMS build in the guest is a problem I can fix over SSH instead of with a keyboard plugged into the box.</p>
+<p>A few settings matter more than the rest:</p>
+<ul>
+<li><code>machine: q35</code> and <code>cpu: host</code>. The VM started life on a CPU model with no AVX, and a prebuilt binary died with <code>SIGILL</code> until I switched.</li>
+<li><code>hostpci0</code> and <code>hostpci1</code> point at whole slots, with no display flags. The VM keeps its emulated VGA for a console.</li>
+<li><code>hugepages: 1024</code> with <code>balloon: 0</code>, and <code>numa: 1</code>. More on that below.</li>
+<li>Save <code>qm config</code> and <code>lspci -nn</code> before you touch the BIOS or move a card. The PCI addresses of my V100s have moved as I filled slots.</li>
+</ul>
+<p>Debian 13 ships driver 550, and Volta needs 580. I ran NVIDIA’s <code>.run</code> installer for 580.173.02, which registers the module with DKMS so it rebuilds on kernel updates. Then comes the trick. <code>apt install nvidia-cuda-toolkit</code> would pull the 550 driver back in, so I built an empty package with <code>equivs</code> that claims to provide the Debian driver packages:</p>
+<pre><code>Package: nvidia-driver-dummy-580
+Version: 580.173.02
+Provides: libcuda1, nvidia-driver, nvidia-driver-libs, nvidia-driver-bin, nvidia-kernel-dkms, ...
+</code></pre>
+<p>The <code>Provides:</code> line lists every Debian driver package, trimmed here. Build it, install it, and the toolkit goes in without touching the driver:</p>
+<pre><code class="language-bash">equivs-build control &amp;&amp; dpkg -i nvidia-driver-dummy-580_*.deb
+apt-get install -y nvidia-cuda-toolkit     # nvcc 12.4, and the 580 driver stays put
+</code></pre>
+<p>Two more gotchas from the guest:</p>
+<ul>
+<li>Installing the toolkit pulled in <code>libnvidia-ml1</code> 550, which broke <code>nvtop</code>. The fix is <code>ln -sf libnvidia-ml.so.1 /usr/lib/x86_64-linux-gnu/libnvidia-ml.so &amp;&amp; ldconfig</code>.</li>
+<li>CUDA 12.9 will not compile anything on Debian 13. glibc 2.41 declares the <code>cospi</code>/<code>sinpi</code> family with <code>__THROW</code> and CUDA’s headers do not, so nvcc fails on every file. A one-line <code>sed</code> on <code>crt/math_functions.h</code> adds the missing <code>__THROW</code>.</li>
+</ul>
+<h3>P2P</h3>
+<p>This one is my favorite. Inside the VM, CUDA refused to let the cards see each other’s memory. <code>cudaDeviceCanAccessPeer</code> returned 0 and <code>cudaDeviceEnablePeerAccess</code> failed with error 217. The cards were fine. QEMU had never been told they sit in the same GPUDirect clique. Two arguments fix it:</p>
+<pre><code>-set device.hostpci0.x-nv-gpudirect-clique=1 -set device.hostpci1.x-nv-gpudirect-clique=1
+</code></pre>
+<p>Then stop and start the VM. A reboot is not enough. After that the check passes (<code>canAccessPeer=1</code>) and a kernel on one card can read and write the other card’s memory, with every byte verified.</p>
+<table>
+<thead>
+<tr>
+<th>Transfer (256 MiB)</th>
+<th>GB/s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host to GPU</td>
+<td>11.86</td>
+</tr>
+<tr>
+<td>GPU to host</td>
+<td>13.08</td>
+</tr>
+<tr>
+<td>GPU to GPU, one way</td>
+<td>10.22</td>
+</tr>
+<tr>
+<td>GPU to GPU, both ways at once</td>
+<td>19.55</td>
+</tr>
+</tbody>
+</table>
+<p>Enabling P2P did not make the 16 MiB peer copy faster in the single sweep I ran: 10.86 and 10.75 GB/s before, 10.06 and 10.08 after. PolyStrata passes layers between the cards through host memory anyway, so I am not claiming a speedup. Small-copy latency did drop, from 15.26 and 15.87 µs to 11.99 and 13.23 µs. It is one less thing to rule out. And if a multi-GPU framework in a VM ever tells you peer access is unsupported, check the hypervisor before the hardware.</p>
+<h3>NUMA</h3>
+<p>The host is a dual-socket X99, and each V100 hangs off a different socket’s PCIe root complex (GPU0 on node 0, GPU1 on node 1, going by <code>lspci</code>). So I set <code>numa: 1</code> and bound each guest NUMA node to its own host node with <code>policy=bind</code>, on 1 GB hugepages. Then the VM refused to start:</p>
+<pre><code>hugepage allocation failed (Memory.pm line 731)
+</code></pre>
+<p>At the time, the board’s second socket had no RAM detected at all. <code>numactl --hardware</code> listed node 1 at 0 MB. Binding 24 GB to an empty node can never work, hugepages or not. One line fixed it:</p>
+<pre><code class="language-bash">qm set &lt;vmid&gt; -numa1 &quot;cpus=32-63,hostnodes=0,memory=24576,policy=bind&quot;
+</code></pre>
+<p>Run <code>numactl --hardware</code> on the host before you bind anything. Later, with RAM on both sockets, I tried pinning the vCPUs to their local node to see if it helped decode. It did not: 77.9 tok/s before, 77.1 pinned.</p>
+<h3>Lapilli</h3>
+<p>What serves the model on these cards now is <a href="https://github.com/chris83-dev/lapilli-v100">Lapilli</a>, a V100 port of <a href="https://github.com/jesdga95/basalt">Basalt</a>, the local inference engine for Qwen3.8-Flash-Next. Basalt itself targets Blackwell only. chris83-dev did the Volta port. The README lists Linux and PCIe cards under “not tested”, and the prebuilt build is Windows only, so I built it into a container. It brings its own chat page and keeps Basalt’s OpenAI and Anthropic APIs.</p>
+<p>The Dockerfile is ten lines. It starts from the PolyStrata V100 image I already had, which carries the CUDA 12.9 toolchain, and builds Lapilli for <code>sm_70</code>. There are no engine changes:</p>
+<pre><code class="language-dockerfile">FROM polystrata-v100:v0.1.45-poly.10
+USER root
+RUN apt-get update &amp;&amp; apt-get install -y --no-install-recommends cmake ninja-build &amp;&amp; rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/lapilli
+COPY . /opt/lapilli/
+RUN cmake -S . -B build70 -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CUDA_ARCHITECTURES=70 -DBASALT_MODELS=qwen4exp -DBUILD_TESTING=ON -DCMAKE_CUDA_RUNTIME_LIBRARY=Shared &amp;&amp; cmake --build build70 -j4
+RUN python3 -m venv .venv &amp;&amp; .venv/bin/pip install --no-cache-dir -r requirements.txt
+ENV HOME=/data PATH=/opt/lapilli/bin:$PATH PYTHONUNBUFFERED=1
+HEALTHCHECK NONE
+ENTRYPOINT [&quot;/opt/lapilli/bin/basalt&quot;, &quot;serve&quot;]
+</code></pre>
+<p>The image is tagged <code>lapilli-v100:7588701-cuda12.9</code>, after the source commit. The container serves the UD-IQ4_XS pack on both cards with int8 KV, memory-mapped experts, and a 524288-token context, which is 2x YaRN on top of the model’s native 262144. It passed 80 functional CPU tests, five GPU tests picked for the V100, and ten quantization parity fixtures.</p>
+<p>One line in the compose file ties back to the P2P section. Lapilli ships with peer access switched off on Volta, because on the author’s machine direct copies between two V100s returned bad data. <code>BASALT_PEER_NO_P2P=0</code> turns it back on. The byte checks pass in both directions on my cards, so I turned it on. Run the check on your own cards before you flip it.</p>
+<p>To see whether the context limit is real, I fed it 520041 tokens with two random values planted early and midway. It returned both exactly, with no cached prompt tokens. Reading the prompt took 646.9 s, which is 803.9 tok/s, and the 31-token answer decoded at 43.4 tok/s. That is a retrieval test, not a prose benchmark at 512K.</p>
+<p>Against the dense Qwen3.8-27B in FP16 that ran on these cards before (llama.cpp, tensor split, no draft), on the median of three 512-token answers at temperature 0 with thinking off:</p>
+<table>
+<thead>
+<tr>
+<th>Case</th>
+<th>Lapilli tok/s</th>
+<th>Qwen3.8-27B FP16 tok/s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>short, coding/design</td>
+<td>106.7</td>
+<td>27.2</td>
+</tr>
+<tr>
+<td>short, prose</td>
+<td>91.0</td>
+<td>27.2</td>
+</tr>
+<tr>
+<td>short, structured</td>
+<td>131.8</td>
+<td>27.1</td>
+</tr>
+<tr>
+<td>128K, coding/design</td>
+<td>87.9</td>
+<td>20.0</td>
+</tr>
+<tr>
+<td>128K, prose</td>
+<td>77.1</td>
+<td>19.9</td>
+</tr>
+<tr>
+<td>128K, structured</td>
+<td>107.0</td>
+<td>19.8</td>
+</tr>
+</tbody>
+</table>
+<p>The long rows carry about 130K tokens of context, and the first long prompt took 112.5 s to read against 163.3 s for the 27B. Two caveats. This compares two deployed setups and not equal accuracy, since Lapilli runs quantized MoE weights with speculative decoding and the 27B is dense FP16 with no draft. And the coding prompt asked for a design explanation first, so those tokens are prose about code.</p>
+<p>I also run the <a href="https://huggingface.co/huihui-ai/Huihui-Qwen3.8-Flash-Next-abliterated-v2-GGUF">Huihui abliterated build</a> of the same model. The converter ships in the image, so I pointed it at the UD-IQ4_XS GGUF shards after checking their SHA256 hashes, and 35.5 minutes later it had repacked them into a 91 GiB <code>.basalt</code> file with no engine rebuild. Arithmetic, streaming, a tool-call round trip and the long-context retrieval all pass. It is slower on short prompts, and the draft acceptance rate on Python and JSONL drops with it:</p>
+<table>
+<thead>
+<tr>
+<th>Short prompt</th>
+<th>Stock tok/s</th>
+<th>Abliterated tok/s</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>prose</td>
+<td>105.5</td>
+<td>102.1</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>157.0</td>
+<td>148.8</td>
+</tr>
+<tr>
+<td>JSONL</td>
+<td>153.6</td>
+<td>134.4</td>
+</tr>
+</tbody>
+</table>
+<p>These prompts differ from the table above and were measured on the 512K profile, so do not line the two tables up. The abliterated build has been the default on the box since November 20.</p>
+<p>The last piece is Inkling 2 Mini on a single V100, which I ported in <a href="https://github.com/Csavoldi/lapilli-inkling/blob/inkling2-port/INKLING2.md">my own fork of Lapilli</a> shortly after upstream Basalt added it for Blackwell. About 16 GB of weights fit on one card. Its logits match llama.cpp on 5 of 5 top-1 tokens, with KL between 0.0001 and 0.0005. With a 512K context configured, decode runs at 69 tok/s on an empty context, 60.5 at 42K, and 44.4 at 165K. Prefill is the weak part, at 439 tok/s with 42K tokens in and 211 at 165K, so a cold 512K prompt would take something like 45 minutes. A first scheduling tweak, which skips the expert prefetch during single-row decode, lifted short-prompt decode from about 72.5 to 83.5 tok/s with byte-identical logits. That one is still an experiment until it holds up at longer contexts.</p>
+<h3>Loose Ends</h3>
+<ul>
+<li><code>nvidia-smi</code> reports Persistence Mode as Disabled on both cards even though <code>nvidia-persistenced</code> is running. I have not chased that down.</li>
+<li>ECC is off on both cards. My notes do not say why, and the card ships with it on.</li>
+<li>Upstream still marks Lapilli’s Linux and Volta peer path as experimental, which is fair.</li>
+</ul>
+<p>Credits where due: <a href="https://www.thingiverse.com/thing:6897454">themayeah</a> for the original fan adapter, <a href="https://github.com/chris83-dev/lapilli-v100">chris83-dev</a> for the Lapilli port, <a href="https://github.com/jesdga95/basalt">Jesús Gulfo</a> for Basalt, and <a href="https://github.com/wilicc/gpu-burn">gpu-burn</a>, which is what I use for burn-in. Build it with <code>COMPUTE=70</code>, since upstream defaults to 7.5.</p>
+
+      </div>
+      <a class="back-link" href="../">Back to blog</a>
+    </article>
+  </main>
+
+  <footer class="site-footer site-shell">
+    <p><a href="../../">Return to the homepage</a></p>
+  </footer>
+</body>
+</html>

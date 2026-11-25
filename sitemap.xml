@@ -7,6 +7,10 @@
     <loc>https://www.csavoldi.net/blog/</loc>
   </url>
   <url>
+    <loc>https://www.csavoldi.net/blog/posts/living-with-volta-settling-two-tesla-v100s-into-the-homelab.html</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
     <loc>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</loc>
     <lastmod>2026-10-26</lastmod>
   </url>

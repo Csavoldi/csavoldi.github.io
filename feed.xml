@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://www.csavoldi.net/feed.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>Living with Volta: settling two Tesla V100s into the homelab</title>
+      <link>https://www.csavoldi.net/blog/posts/living-with-volta-settling-two-tesla-v100s-into-the-homelab.html</link>
+      <guid>https://www.csavoldi.net/blog/posts/living-with-volta-settling-two-tesla-v100s-into-the-homelab.html</guid>
+      <pubDate>Wed, 25 Nov 2026 00:00:00 GMT</pubDate>
+      <description>The follow-up I promised on the fan curve script, plus everything else it took to settle two Tesla V100s into a Proxmox homelab.</description>
+    </item>
+    <item>
       <title>Reviving Volta: Qwen3.8-Flash-Next on two Tesla V100s</title>
       <link>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</link>
       <guid>https://www.csavoldi.net/blog/posts/reviving-volta-qwen3-8-flash-next-on-two-tesla-v100s.html</guid>
